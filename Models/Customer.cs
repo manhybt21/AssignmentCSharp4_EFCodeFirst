@@ -30,6 +30,10 @@ namespace AssignmentCSharp4_EFCodeFirst.Models
         [StringLength(30)]
         [Required]
         public string Password { get; set; }
+        //[Display(Name = "Nhập Lại Mật Khẩu")]
+        //[StringLength(30)]
+        //[Required]
+        //public string ConfirmPassword { get; set; }
 
     }
 }

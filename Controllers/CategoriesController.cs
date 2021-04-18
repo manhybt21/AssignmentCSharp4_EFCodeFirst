@@ -90,5 +90,21 @@ namespace AssignmentCSharp4_EFCodeFirst.Controllers
                 return View(category);
             }
         }
+        public IActionResult Delete(int id)
+        {
+            var category = _databaseContext.Categorys.FirstOrDefault(x => x.Id == id);
+            return View(category);
+        }
+        [HttpPost]
+        public async Task<IActionResult> Delete(int id,string result)
+        {
+            var getIdCateInProduct = _databaseContext.Products.Where(x => x.CategoryId == id).ToList();
+            _databaseContext.RemoveRange(getIdCateInProduct);
+            _databaseContext.SaveChangesAsync();
+            var category = await _databaseContext.Categorys.FindAsync(id);
+            _databaseContext.Remove(category);
+            _databaseContext.SaveChangesAsync();
+            return RedirectToAction("Index","categories");
+        }
     }
 }

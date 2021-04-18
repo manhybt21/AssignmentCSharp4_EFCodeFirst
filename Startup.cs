@@ -60,7 +60,7 @@ namespace AssignmentCSharp4_EFCodeFirst
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=viewproducts}/{action=Index}/{id?}");
+                    pattern: "{controller=Accounts}/{action=Login}/{id?}");
             });
         }
     }
