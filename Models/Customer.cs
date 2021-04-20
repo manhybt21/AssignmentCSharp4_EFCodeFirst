@@ -11,11 +11,14 @@ namespace AssignmentCSharp4_EFCodeFirst.Models
     public class Customer
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Display(Name="Họ Và Tên")]
         [StringLength(50)]
         [Required]
         public string Name { get; set; }
+        [Display(Name = "Ngày Sinh")]
+        public DateTime Birthday { get; set; }
         [Display(Name = "Số Điện Thoại")]
         [StringLength(13)]
         public string PhoneNumber { get; set; }

@@ -16,9 +16,9 @@ namespace AssignmentCSharp4_EFCodeFirst.Controllers
         public ActionResult Index()
         {
 
-            var cart = SessionHelper.GetObjectFromJson<List<Cart>>(HttpContext.Session, "cart");
+            var cart = SessionHelper.GetObjectFromJson<List<Item>>(HttpContext.Session, "cart");
             ViewBag.cart = cart;
-            ViewBag.total = cart.Sum(c => c.Product.Price * c.Quantity);
+            ViewBag.total = cart.Sum(c => c.product.Price * c.Quantity);
             return View();
         }
 

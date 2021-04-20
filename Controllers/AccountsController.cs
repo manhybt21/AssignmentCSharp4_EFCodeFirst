@@ -23,6 +23,13 @@ namespace AssignmentCSharp4_EFCodeFirst.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(Customer acc)
         {
+            var findEmail = from n in _databaseContext.Customers
+                            where n.EmailAddress==acc.EmailAddress
+                            select n.EmailAddress;
+            if (findEmail.FirstOrDefault() == acc.EmailAddress)
+            {
+                ModelState.AddModelError("", "Email đã tồn tại");
+            }
             _databaseContext.Add(acc);
             await _databaseContext.SaveChangesAsync();
             return View();
@@ -42,12 +49,19 @@ namespace AssignmentCSharp4_EFCodeFirst.Controllers
             }
                 else if (findAcount.EmailAddress == customer.EmailAddress || findAcount.Password == customer.Password)
                 {
+                HttpContext.Session.SetString("Email", customer.EmailAddress);
                 return RedirectToAction("Index", "ViewProducts");
-                }
+            }
                 else
                 {
-                return View();
+                    return View();
                 }
+        }
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Remove("Email");
+            return RedirectToAction("login", "Accounts");
         }
     }
 }

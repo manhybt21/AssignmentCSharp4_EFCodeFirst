@@ -1,4 +1,4 @@
-﻿@model List<AssignmentCSharp4_EFCodeFirst.Models.Item>
+﻿@model List<AssignmentCSharp4_EFCodeFirst.Models.Cart>
 
 <h2>GIỎ HÀNG</h2>
 
@@ -18,21 +18,21 @@
         </tr>
         @foreach (var cartitem in Model)
         {
-            var thanhtien = cartitem.Quantity * cartitem.product.Price;
+            var thanhtien = cartitem.Amount;
             total += thanhtien;
 
             <tr>
                 <td>@(stt++)</td>
-                <td>@cartitem.product.NameProduct</td>
-                <td>@(cartitem.product.Price.ToString("n0"))</td>
-                <td><input asp-for="@cartitem.Quantity" id="@($"quantity-{cartitem.product.id}")" /></td>
+                <td>@cartitem.Product.NameProduct</td>
+                <td>@(cartitem.Product.Price.ToString("n0"))</td>
+                <td><input asp-for="@cartitem.Quantity" id="@($"quantity-{cartitem.Product.id}")" /></td>
                 <td>@(thanhtien.ToString("n0")) VNĐ</td>
                 <td>
                     <button class="btn btn-success updatecartitem"
-                            data-productid="@cartitem.product.id">
+                            data-productid="@cartitem.Product.id">
                         Cập nhật
                     </button>
-                    <a asp-route="removecart" asp-route-productid="@cartitem.product.id"
+                    <a asp-route="removecart" asp-route-productid="@cartitem.Product.id"
                        class="btn btn-danger">Xóa</a>
                 </td>
             </tr>

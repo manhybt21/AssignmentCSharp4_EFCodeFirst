@@ -20,7 +20,7 @@
                             <h6>Giá: @Html.DisplayFor(modelItem => item.Price)<span>VNĐ</span></h6>
                             <h6>Mô tả: @Html.DisplayFor(modelItem => item.Desciption)</h6>
                         </span>
-                        <a asp-route="addcart"
+                        <a asp-action="addCart"
                            asp-route-productid="@item.id"
                            class="btn btn-success align-items-center btn-sm">Đặt hàng</a>
                     </span>

@@ -1,0 +1,60 @@
+﻿@model List<AssignmentCSharp4_EFCodeFirst.Models.Cart>
+
+<h2>GIỎ HÀNG</h2>
+
+@if (Model.Count > 0)
+{
+    decimal total = 0;
+    int stt = 1;
+
+    <table class="table">
+        <tr>
+            <th>#</th>
+            <th>Sản phẩm</th>
+            <th>Giá</th>
+            <th>Số lượng</th>
+            <th>Thành tiền</th>
+            <th></th>
+        </tr>
+        @foreach (var cartitem in Model)
+        {
+            var thanhtien = cartitem.Price*cartitem.Quantity;
+            total += thanhtien;
+
+            <tr>
+                <td>@(stt++)</td>
+                <td>@Html.DisplayFor(model=>cartitem.NameProduct)</td>
+                <td>@Html.DisplayFor(model => cartitem.Price)</td>
+                <td><input onchange="changeQuantity()" type="number" id="quantity" value="@Html.DisplayFor(model => cartitem.Quantity)" /></td>
+                <td>@(thanhtien.ToString("n0")) VNĐ</td>
+                <td>
+                    <a class="btn btn-success"
+                       asp-action="update"
+                            asp-route-id="@cartitem.id"  asp-route-quantity="">
+                        Cập nhật
+                    </a>
+                    <a asp-action="deleteCart" asp-route-id="@cartitem.id"
+                       class="btn btn-danger">Xóa</a>
+                </td>
+            </tr>
+        }
+        <tr>
+            <td colspan="4" class="text-right">Tổng tiền</td>
+            <td>@(total.ToString("n0")) VNĐ</td>
+            <td></td>
+        </tr>
+    </table>
+
+    <a asp-controller="Product" asp-action="Checkout" class="btn btn-success">Gửi đơn hàng</a>
+
+}
+else
+{
+    <p class="alert alert-danger">Giỏ hàng trống</p>
+}
+<script>
+    function changeQuantity() {
+        var x = document.getElementById("quantity").value;
+        document.getElementById("updateQuantity").innerHTML = x;
+    }
+</script>

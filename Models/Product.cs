@@ -26,8 +26,8 @@ namespace AssignmentCSharp4_EFCodeFirst.Models
         [Display(Name = "Ảnh")]
         [StringLength(200)]
         public string Image { get; set; }
-        [ForeignKey("CattegoryId")]
-        [Display(Name ="Danh Mục")]
-        public int CategoryId { set; get; }
+        [ForeignKey("CategoryId")]
+        public int CategoryId { get; set; }
+        public Category Category { get; set; }
     }
 }

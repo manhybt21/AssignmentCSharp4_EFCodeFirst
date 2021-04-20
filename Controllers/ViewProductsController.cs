@@ -2,6 +2,7 @@
 using AssignmentCSharp4_EFCodeFirst.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -27,114 +28,62 @@ namespace AssignmentCSharp4_EFCodeFirst.Controllers
             {
                 databaseContext = databaseContext.Where(s => s.NameProduct.Contains(searchString));
             }
+            
             return View(databaseContext);
         }
-        // Key lưu chuỗi json của Cart
-        public const string CARTKEY = "cart";
-
-        // Lấy cart từ Session (danh sách CartItem)
-        List<Item> GetItems()
+        public IActionResult ListCart()
         {
-
-            var session = HttpContext.Session;
-            string jsoncart = session.GetString(CARTKEY);
-            if (jsoncart != null)
+            var view = _context.Carts.Where(x => x.Customer.EmailAddress == HttpContext.Session.GetString("Email")).ToList();
+            return View(view);
+        }
+        public List<Cart> ViewListCart()
+        {
+           var view = _context.Carts.Where(x=>x.Customer.EmailAddress==HttpContext.Session.GetString("Email")).ToList();
+            return new List<Cart>();
+        }
+        public IActionResult addCart(int productId)
+        {
+            Cart gh=new Cart();
+            var product = _context.Products.Find(productId);
+            var cart = ViewListCart();
+            var cartItem = cart.Find(x=>x.Product.id == productId);
+            if (cartItem!=null)
             {
-                return JsonConvert.DeserializeObject<List<Item>>(jsoncart);
+              gh.Quantity =  cartItem.Quantity++;
+                gh.Amount = gh.Quantity * gh.Price;
+                _context.Update(gh);
+                _context.SaveChanges();
             }
-            return new List<Item>();
-        }
-
-        // Xóa cart khỏi session
-        void ClearCart()
-        {
-            var session = HttpContext.Session;
-            session.Remove(CARTKEY);
-        }
-
-        // Lưu Cart (Danh sách CartItem) vào session
-        void SaveCartSession(List<Item> ls)
-        {
-            var session = HttpContext.Session;
-            string jsoncart = JsonConvert.SerializeObject(ls);
-            session.SetString(CARTKEY, jsoncart);
-        }
-        // Thêm sản phẩm vào cart
-        [Route("addcart/{productid:int}", Name = "addcart")]
-        public IActionResult AddToCart([FromRoute] int productid)
-        {
-            var products = _context.Products
-                .Where(p => p.id == productid)
-                .FirstOrDefault();
-            if (products == null)
-                return NotFound("Không có sản phẩm");
-
-            // Xử lý đưa vào Cart ...
-            var cart = GetItems();
-            var cartitem = cart.Find(p => p.product.id == productid);
-            if (cartitem != null)
+            if(cartItem==null)
             {
-                // Đã tồn tại, tăng thêm 1
-                cartitem.Quantity++;
+                var customer = _context.Customers.Where(x => x.EmailAddress == HttpContext.Session.GetString("Email")).FirstOrDefault();
+                gh = new Cart() {Product= product,
+                        NameProduct = product.NameProduct,
+                        Price = product.Price,
+                        Quantity = 1,
+                        Amount = product.Price,
+                        Customer = customer
+                    };
+                _context.Carts.Add(gh);
+                _context.SaveChanges();
             }
-            else
-            {
-                //  Thêm mới
-                cart.Add(new Item() {product=products,Quantity= 1});
-            }
-
-            // Lưu cart vào Session
-            SaveCartSession(cart);
-            // Chuyển đến trang hiện thị Cart
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("ListCart");
         }
-        // Hiện thị giỏ hàng
-        [Route("/cart", Name = "cart")]
-        public IActionResult Cart()
+       public IActionResult Update(int id, int quantity)
         {
-            return View(GetItems());
+            var update = _context.Carts.Find(id);
+            update.Quantity = quantity;
+            update.Amount = quantity * update.Price;
+            _context.Update(update);
+            _context.SaveChanges();
+            return RedirectToAction("ListCart", "ViewProducts");
         }
-        /// xóa item trong cart
-        [Route("/removecart/{productid:int}", Name = "removecart")]
-        public IActionResult RemoveCart([FromRoute] int productid)
+        public IActionResult deleteCart(int id)
         {
-            var cart = GetItems();
-            var cartitem = cart.Find(p => p.product.id == productid);
-            if (cartitem != null)
-            {
-                // Đã tồn tại, tăng thêm 1
-                cart.Remove(cartitem);
-            }
-
-            SaveCartSession(cart);
-            return RedirectToAction(nameof(Cart));
-        }
-        /// Cập nhật
-        [Route("/updatecart", Name = "updatecart")]
-        [HttpPost]
-        /// Cập nhật
-        [Route("/updatecart", Name = "updatecart")]
-        [HttpPost]
-        public IActionResult UpdateCart([FromForm] int productid, [FromForm] int quantity)
-        {
-            // Cập nhật Cart thay đổi số lượng quantity ...
-            var cart = GetItems();
-            var cartitem = cart.Find(p => p.product.id == productid);
-            if (cartitem != null)
-            {
-                // Đã tồn tại, tăng thêm 1
-                cartitem.Quantity = quantity;
-            }
-            SaveCartSession(cart);
-            // Trả về mã thành công (không có nội dung gì - chỉ để Ajax gọi)
-            return Ok();
-        }
-
-        [Route("/checkout")]
-        public IActionResult CheckOut()
-        {
-            // Xử lý khi đặt hàng
-            return View();
+            var delete = _context.Carts.Find(id);
+            _context.Carts.Remove(delete);
+            _context.SaveChanges();
+            return RedirectToAction("ListCart", "ViewProducts");
         }
     }
 }

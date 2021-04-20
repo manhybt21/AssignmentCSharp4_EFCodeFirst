@@ -1,4 +1,4 @@
-﻿
+﻿@using Microsoft.AspNetCore.Http
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,7 +25,7 @@
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-route="cart">Giỏ Hàng</a>
+                            <a class="nav-link text-dark" asp-action="ListCart">Giỏ Hàng</a>
                         </li>
                     </ul>
                     <form asp-controller="viewproducts" asp-action="Index" class="navbar-form navbar-left">
@@ -39,6 +39,8 @@
                         </div>
                     </form>
                     <ul class="nav navbar-nav navbar-right">
+                        <li><a href="#"><span class="glyphicon glyphicon-user"></span>Hello, @Context.Session.GetString("Email") </a></li>
+                        <li><a asp-action="Login" asp-controller="Accounts" a><span class="glyphicon glyphicon-log-out"></span>Logout</a></li>
                         <button class="dropdown bg-success">
                             <li class="dropdown-toggle" data-toggle="dropdown">Admin</li>
                             <div class="dropdown-menu">
@@ -48,8 +50,8 @@
                             </div>
                         </li>
                         </button>
-                        <li><a asp-controller="Accounts" asp-action="Register"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
-                        <li><a asp-controller="Accounts" asp-action="Login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+                        @*<li><a asp-controller="Accounts" asp-action="Register"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+                        <li><a asp-controller="Accounts" asp-action="Login"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>*@
                     </ul>
                 </div>
             </div>

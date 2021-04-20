@@ -38,6 +38,7 @@ namespace AssignmentCSharp4_EFCodeFirst.Services
             var cus =await _context.Customers.FindAsync(customer.Id);
             cus.Name = customer.Name;
             cus.PhoneNumber = customer.PhoneNumber;
+            cus.Birthday = customer.Birthday;
             cus.Address = customer.Address;
             cus.EmailAddress = customer.EmailAddress;
             cus.Password = customer.Password;
