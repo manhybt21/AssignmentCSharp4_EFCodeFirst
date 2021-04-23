@@ -36,27 +36,23 @@ namespace AssignmentCSharp4_EFCodeFirst.Controllers
             var view = _context.Carts.Where(x => x.Customer.EmailAddress == HttpContext.Session.GetString("Email")).ToList();
             return View(view);
         }
-        public List<Cart> ViewListCart()
-        {
-           var view = _context.Carts.Where(x=>x.Customer.EmailAddress==HttpContext.Session.GetString("Email")).ToList();
-            return new List<Cart>();
-        }
         public IActionResult addCart(int productId)
         {
             Cart gh=new Cart();
+            var customer = _context.Customers.Where(x => x.EmailAddress == HttpContext.Session.GetString("Email")).FirstOrDefault();
             var product = _context.Products.Find(productId);
-            var cart = ViewListCart();
-            var cartItem = cart.Find(x=>x.Product.id == productId);
+            var cartItem = _context.Carts.Where(x => x.Product.id == productId&&x.Customer.EmailAddress==customer.EmailAddress).FirstOrDefault();
             if (cartItem!=null)
             {
-              gh.Quantity =  cartItem.Quantity++;
-                gh.Amount = gh.Quantity * gh.Price;
-                _context.Update(gh);
+                cartItem.Quantity++;
+                cartItem.Amount = cartItem.Price * cartItem.Quantity;
+                _context.Carts.Update(cartItem);
                 _context.SaveChanges();
+                return RedirectToAction("ListCart");
             }
-            if(cartItem==null)
+            else
             {
-                var customer = _context.Customers.Where(x => x.EmailAddress == HttpContext.Session.GetString("Email")).FirstOrDefault();
+               
                 gh = new Cart() {Product= product,
                         NameProduct = product.NameProduct,
                         Price = product.Price,
@@ -66,8 +62,9 @@ namespace AssignmentCSharp4_EFCodeFirst.Controllers
                     };
                 _context.Carts.Add(gh);
                 _context.SaveChanges();
+                return RedirectToAction("ListCart");
             }
-            return RedirectToAction("ListCart");
+            
         }
        public IActionResult Update(int id, int quantity)
         {
